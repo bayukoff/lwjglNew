@@ -41,6 +41,19 @@ public class VAO {
     public void unbindVAO(){
         GL30.glBindVertexArray(0);
     }
+    public int getAttribBufferBindig(int index){
+        return GL30.glGetVertexAttribIi(index, GL30.GL_VERTEX_ARRAY_BUFFER_BINDING);
+    }
+    public int getAttribEnabled(int index){
+        return GL30.glGetVertexAttribIi(index, GL30.GL_VERTEX_ATTRIB_ARRAY_ENABLED);
+    }
+    public int getAttribArraySize(int index){
+        return GL30.glGetVertexAttribIi(index, GL30.GL_VERTEX_ATTRIB_ARRAY_SIZE);
+    }
+    public int getAttribArrayStride(int index){
+        return GL30.glGetVertexAttribIi(index, GL30.GL_VERTEX_ATTRIB_ARRAY_STRIDE);
+    }
+
     public int getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package ru.cool.lwjgl.controls;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import ru.cool.lwjgl.Config;
 import ru.cool.lwjgl.input.Buttons;
@@ -11,13 +12,13 @@ import ru.cool.lwjgl.utils.Time;
 public class CameraController extends MovingObjectsController{
 
     private Camera camera;
-    private float cameraSpeed;
+
     public CameraController(Camera camera) {
         super(camera);
         this.camera = camera;
     }
     private void moveCamera(){
-        this.cameraSpeed = (float) (Time.deltaTime * camera.getSpeed());
+        float cameraSpeed = (float) (Time.deltaTime * camera.getSpeed());
         if (Keyboard.isButtonPress(Buttons.BACK)){
             camera.getPosition().add(new Vector3f(0,0, cameraSpeed).sub(camera.getDirection()).normalize().mul(cameraSpeed));
         }
@@ -56,6 +57,7 @@ public class CameraController extends MovingObjectsController{
         direction.z = (float) ((float) Math.cos(Math.toRadians(camera.getRotationPitch())) * Math.sin(Math.toRadians(camera.getRotationYaw())));
 
         camera.setDirection(direction.normalize());
+        camera.setViewMatrix(new Matrix4f().lookAt(camera.getPosition(), new Vector3f(camera.getPosition()).add(camera.getDirection()), camera.getUpVector()));
     }
 
     public Camera getCamera() {

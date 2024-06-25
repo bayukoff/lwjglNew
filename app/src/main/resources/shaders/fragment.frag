@@ -3,7 +3,7 @@
 in vec2 vTexCoords;
 out vec4 fragColor;
 
-uniform vec4 customColor;
+uniform vec4 meshColor;
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
@@ -26,10 +26,17 @@ void main(){
 //        texel1.rgb = texel2.rgb;
 //    }
 //    fragColor = texel1 + customColor;
-      vec4 texel = texelFetch(texture0, texCoordsInt, 0);
-      if (texel.a == 0) {
-          discard;
-      }
-          fragColor = texel;
-
+    vec4 texel = texelFetch(texture0, texCoordsInt, 0);
+    if (texel.a == 0) {
+        discard;
+    }
+    if (meshColor.r != 0 && meshColor.g != 0 && meshColor.b != 0){
+        fragColor = texel * meshColor;
+    }
+    else if(texel.r == 0 && texel.g == 0 && texel.b == 0){
+        fragColor = meshColor;
+    }
+    else{
+        fragColor = texel;
+    }
 }

@@ -1,20 +1,24 @@
 package ru.cool.lwjgl.window;
 
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GLCapabilities;
 import ru.cool.lwjgl.controls.CameraController;
 import ru.cool.lwjgl.input.Buttons;
 import ru.cool.lwjgl.input.Keyboard;
 import ru.cool.lwjgl.input.Mouse;
+import ru.cool.lwjgl.materials.StandardMaterial;
+import ru.cool.lwjgl.materials.TextureMaterial;
+import ru.cool.lwjgl.materials.Uniforms;
 import ru.cool.lwjgl.objects.Camera;
-import ru.cool.lwjgl.objects.buffers.EBO;
-import ru.cool.lwjgl.objects.buffers.VAO;
-import ru.cool.lwjgl.objects.buffers.VBO;
-import ru.cool.lwjgl.objects.meshes.flat.Triangle;
+import ru.cool.lwjgl.objects.meshes.primitives2d.Quad;
+import ru.cool.lwjgl.objects.meshes.primitives2d.Triangle;
+import ru.cool.lwjgl.objects.meshes.primitives3d.Cube;
 import ru.cool.lwjgl.renderer.MeshRenderer;
 import ru.cool.lwjgl.shaders.Shader;
 import ru.cool.lwjgl.shaders.ShaderProgram;
@@ -25,16 +29,12 @@ import ru.cool.lwjgl.utils.Time;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 public class Window {
     private final ShortBuffer width = BufferUtils.createShortBuffer(1);
     private final ShortBuffer height = BufferUtils.createShortBuffer(1);
     private final String windowName;
     private long windowId;
-    public static double deltaTime;
-    private Matrix4f perspective;
     private final FloatBuffer quadVertices = BuffersUtil.storeFloatData(new float[]{
             -1f, -1f, 0f, 1f,
             -1f, 1f, 0f, 0f,
@@ -91,7 +91,6 @@ public class Window {
             23,21,22
     });
 
-
     public Window(short width, short height, String windowName) {
         this.width.put(width).flip();
         this.height.put(height).flip();
@@ -103,49 +102,36 @@ public class Window {
     }
 
     public void updateWindow() {
-
         Shader vertexShader = new Shader(GL30.GL_VERTEX_SHADER).loadShader("shaders/vertex.vert").createShader();
         Shader fragmentShader = new Shader(GL30.GL_FRAGMENT_SHADER).loadShader("shaders/fragment.frag").createShader();
         ShaderProgram program = new ShaderProgram(vertexShader.getShaderIndex(), fragmentShader.getShaderIndex()).createProgram();
+
         Keyboard.handleInput(windowId);
         Mouse.handleInput(windowId);
-
-        VAO vao = new VAO();
-        vao.generateVAO();
-        vao.bindVAO();
-        VBO<FloatBuffer> vbo = new VBO<>();
-        vbo.generateBuffer();
-        vbo.bindBuffer();
-        vbo.setBufferData(cubeVertices);
-        EBO EBO = new EBO();
-        EBO.generateBuffer();
-        EBO.bindBuffer();
-        EBO.setBufferData(cubeIndices);
-        vao.addVertexAttribute(0, 3, 5 * Float.BYTES, 0);
-        vao.addVertexAttribute(1, 2, 5 * Float.BYTES, 3 * Float.BYTES);
-        vao.enableVertexAttribute(0);
-        vao.enableVertexAttribute(1);
-        vbo.unbindBuffer();
-        vao.unbindVAO();
-
         Camera camera = new Camera(new Vector3f(0,0,5), 3);
         CameraController cameraController = new CameraController(camera);
-
         Texture texture = new Texture("textures/dirt.png").loadTexture(true);
+        Texture texture1 = new Texture("textures/grassSide.png").loadTexture(true);
+        Texture glass = new Texture("textures/glass.png").loadTexture(true);
+        Texture daria = new Texture("textures/sprites/daria.png").loadTexture(true);
+        daria.createTexture();
+        texture1.createTexture();
         texture.createTexture();
-
-        Matrix4f model = new Matrix4f();
-        Matrix4f projection = new Matrix4f().perspective(45, (float) getWidth() / getHeight(), 0.1f, 100f);
-        program.bindProgram();
-
-        program.setUniformMatrix4f(model, "model");
-        program.setUniformMatrix4f(camera.getViewMatrix(), "view");
-        program.setUniformMatrix4f(projection, "projection");
-        program.unbindProgram();
-
-        Triangle tri = new Triangle();
-        MeshRenderer renderer = new MeshRenderer(new ArrayList<>(), program);
-
+        glass.createTexture();
+        MeshRenderer meshRenderer = new MeshRenderer(program);
+        Triangle triangle = new Triangle(new StandardMaterial(1,0,1));
+        Quad quad = new Quad(new TextureMaterial(texture1));
+        Quad window = new Quad(new TextureMaterial(glass));
+        Quad dariaQuad = new Quad(new TextureMaterial(daria));
+        Cube cube = new Cube(new TextureMaterial(texture));
+        cube.setPosition(2,0, -2);
+        triangle.setPosition(new Vector3f(-0.5f, 0,0));
+        window.setPosition(0,0,3);
+        meshRenderer.addMeshToRender(quad);
+        meshRenderer.addMeshToRender(triangle);
+        meshRenderer.addMeshToRender(cube);
+        meshRenderer.addMeshToRender(window);
+        meshRenderer.addMeshToRender(dariaQuad);
 
         while (!GLFW.glfwWindowShouldClose(windowId)) {
             if (Keyboard.isButtonPress(Buttons.ESCAPE)){
@@ -155,31 +141,28 @@ public class Window {
             GLFW.glfwPollEvents();
             GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GL11.glClearColor(0.8f, 0.75f, 0.92f, 0f);
             GL11.glViewport(0, 0, this.getWidth(), this.getHeight());
+
             program.bindProgram();
+            program.setUniformMatrix4f(camera.getViewMatrix(), Uniforms.VIEW_MATRIX);
+            program.setUniformMatrix4f(camera.getProjectionMatrix(), Uniforms.PROJECTION_MATRIX);
             cameraController.invoke();
-            texture.bindTexture();
-            vao.bindVAO();
-            camera.setViewMatrix(new Matrix4f().lookAt(new Vector3f(camera.getPosition()), new Vector3f(camera.getPosition()).add(camera.getDirection()), new Vector3f(camera.getUpVector())));
-            for (int i = 0; i < 5; i++) {
-                for (int j = 0; j < 5; j++){
-                    program.setUniformMatrix4f(new Matrix4f().translate(j * 0.5f,0,i * 0.5f), "model");
-                    GL30.glDrawElements(GL30.GL_TRIANGLES, cubeIndices.limit(), GL30.GL_UNSIGNED_INT, 0);
-                }
-            }
-            program.setUniformMatrix4f(camera.getViewMatrix(), "view");
-            vao.unbindVAO();
-            texture.unbindTexture();
+
+            quad.setPosition(new Vector3f((float) Math.cos(Time.time * 5), (float)Math.sin(Time.time * 5),-1));
+            dariaQuad.setPosition(new Vector3f(0, (float)Math.sin(Time.time * 5),-2));
+            meshRenderer.renderMeshes();
+
             program.unbindProgram();
 
             GL11.glDisable(GL11.GL_DEPTH_TEST);
-
             Time.deltaTime = Time.time - Time.lastTime;
             Time.lastTime = Time.time;
-
             GLFW.glfwSwapBuffers(windowId);
         }
+        GL30.glDeleteProgram(program.getShaderProgram());
         GLFW.glfwTerminate();
     }
 
