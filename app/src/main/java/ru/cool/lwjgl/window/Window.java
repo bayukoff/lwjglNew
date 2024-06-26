@@ -143,7 +143,7 @@ public class Window {
         program.setUniformMatrix4f(projection, "projection");
         program.unbindProgram();
 
-        Triangle tri = new Triangle();
+        Triangle triangle = new Triangle();
         MeshRenderer renderer = new MeshRenderer(new ArrayList<>(), program);
 
 
