@@ -1,15 +1,22 @@
 package ru.cool.lwjgl.materials;
 
+import ru.cool.lwjgl.shaders.ShaderProgram;
+import ru.cool.lwjgl.shaders.Shaders;
 import ru.cool.lwjgl.textures.Texture;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextureMaterial extends Material{
-    private List<Texture> textures;
+public class TextureMaterial implements IMaterial {
 
-    public void addTexture(Texture texture){
+    private List<Texture> textures;
+    public TextureMaterial(Texture texture) {
         getTextures().add(texture);
+    }
+
+    public TextureMaterial addTexture(Texture texture){
+        getTextures().add(texture);
+        return this;
     }
 
     public List<Texture> getTextures() {
@@ -20,5 +27,13 @@ public class TextureMaterial extends Material{
 
     public void setTextures(List<Texture> textures) {
         this.textures = textures;
+    }
+
+    public void unbindTextures(){
+        textures.getFirst().unbindTexture();
+    }
+    @Override
+    public void applyMaterial() {
+        textures.getFirst().bindTexture();
     }
 }

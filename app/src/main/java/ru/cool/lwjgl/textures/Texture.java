@@ -33,6 +33,7 @@ public class Texture {
             return this;
         }
         int numberChannels = isAlpha ? 4 : 3;
+        STBImage.stbi_set_flip_vertically_on_load(true);
         imageData = STBImage.stbi_load(textureFile.getPath(), width, height, channels, numberChannels);
         if(imageData == null){
             System.err.println("Error when loading texture");
