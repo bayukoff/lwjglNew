@@ -9,6 +9,8 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("java-library")
+    kotlin("jvm")
 }
 
 repositories {
@@ -18,20 +20,21 @@ repositories {
 
 dependencies {
     // This dependency is used by the application.
-    implementation(libs.guava)
-    implementation(platform("org.lwjgl:lwjgl-bom:3.3.3"))
-
-    implementation("org.lwjgl", "lwjgl")
-    implementation("org.lwjgl", "lwjgl-glfw")
-    implementation("org.lwjgl", "lwjgl-openal")
-    implementation("org.lwjgl", "lwjgl-opengl")
-    implementation("org.lwjgl", "lwjgl-stb")
+    api(libs.guava)
+    api(platform("org.lwjgl:lwjgl-bom:3.3.3"))
+    api("org.lwjgl:lwjgl-assimp:3.3.3")
+    api("org.lwjgl", "lwjgl")
+    api("org.lwjgl", "lwjgl-glfw")
+    api("org.lwjgl", "lwjgl-openal")
+    api("org.lwjgl", "lwjgl-opengl")
+    api("org.lwjgl", "lwjgl-stb")
     runtimeOnly("org.lwjgl", "lwjgl", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-glfw", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = "natives-windows")
-    implementation("org.joml", "joml", "1.10.5")
+    api("org.joml", "joml", "1.10.5")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 testing {
@@ -47,7 +50,7 @@ testing {
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 
 }
