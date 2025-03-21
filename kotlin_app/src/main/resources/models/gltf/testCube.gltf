@@ -1,0 +1,178 @@
+{
+    "accessors": [{
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5123,
+            "count": 36,
+            "type": "SCALAR",
+            "max": [35],
+            "min": [0]
+        }, {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 36,
+            "type": "VEC3",
+            "max": [1.0000004768371582, 1.0000003576278687, 1],
+            "min": [-1.0000003576278687, -1.0000005960464478, -1],
+            "name": "POSITION"
+        }, {
+            "bufferView": 1,
+            "byteOffset": 12,
+            "componentType": 5126,
+            "count": 36,
+            "type": "VEC3",
+            "max": [1.0000044107437134, 1.0000044107437134, 1.0000044107437134],
+            "min": [-1.0000044107437134, -1.0000044107437134, -1.0000044107437134],
+            "name": "NORMAL"
+        }, {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "normalized": false,
+            "count": 21,
+            "type": "SCALAR",
+            "max": [0.8333333333333334],
+            "min": [0]
+        }, {
+            "bufferView": 2,
+            "byteOffset": 84,
+            "componentType": 5126,
+            "normalized": false,
+            "count": 21,
+            "type": "VEC3",
+            "max": [0, 368.8971862792969, 0],
+            "min": [0, 1.5790939331054688, 0]
+        }, {
+            "bufferView": 3,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "normalized": false,
+            "count": 2,
+            "type": "SCALAR",
+            "max": [0.8333333333333334],
+            "min": [0]
+        }, {
+            "bufferView": 3,
+            "byteOffset": 8,
+            "componentType": 5126,
+            "normalized": false,
+            "count": 2,
+            "type": "VEC3",
+            "max": [100, 100, 100],
+            "min": [100, 100, 100]
+        }
+    ],
+    "animations": [{
+            "channels": [{
+                    "sampler": 0,
+                    "target": {
+                        "node": 0,
+                        "path": "translation"
+                    }
+                }, {
+                    "sampler": 1,
+                    "target": {
+                        "node": 0,
+                        "path": "scale"
+                    }
+                }
+            ],
+            "samplers": [{
+                    "input": 3,
+                    "interpolation": "LINEAR",
+                    "output": 4
+                }, {
+                    "input": 5,
+                    "interpolation": "LINEAR",
+                    "output": 6
+                }
+            ],
+            "name": "Cube|CubeAction"
+        }
+    ],
+    "asset": {
+        "generator": "Aspose.3D 24.6.0",
+        "version": "2.0"
+    },
+    "buffers": [{
+            "uri": "buffer.bin",
+            "byteLength": 1320
+        }
+    ],
+    "bufferViews": [{
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 72,
+            "target": 34963
+        }, {
+            "buffer": 0,
+            "byteOffset": 76,
+            "byteLength": 864,
+            "byteStride": 24,
+            "target": 34962
+        }, {
+            "buffer": 0,
+            "byteOffset": 944,
+            "byteLength": 336
+        }, {
+            "buffer": 0,
+            "byteOffset": 1284,
+            "byteLength": 32
+        }
+    ],
+    "cameras": [{
+            "perspective": {
+                "aspectRatio": 1.777777777777778,
+                "yfov": 0.8575560450553893,
+                "zfar": 10000,
+                "znear": 10.000000149011612
+            },
+            "type": "perspective",
+            "name": "Camera"
+        }
+    ],
+    "materials": [{
+            "name": "Material",
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [0.800000011920929, 0.800000011920929, 0.800000011920929, 1],
+                "metallicFactor": 1,
+                "roughnessFactor": 1
+            },
+            "emissiveFactor": [0.800000011920929, 0.800000011920929, 0.800000011920929],
+            "alphaMode": "OPAQUE",
+            "doubleSided": false
+        }
+    ],
+    "meshes": [{
+            "primitives": [{
+                    "attributes": {
+                        "POSITION": 1,
+                        "NORMAL": 2
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "mode": 4
+                }
+            ],
+            "name": "Cube"
+        }
+    ],
+    "nodes": [{
+            "mesh": 0,
+            "rotation": [-0.7071068387877039, -0, -0, 0.7071067235853865],
+            "scale": [100, 99.99999999999999, 99.99999999999999],
+            "translation": [0, 368.8971862792969, 0],
+            "name": "Cube"
+        }, {
+            "camera": 0,
+            "matrix": [-65.15583280329095, -44.52713576570855, -61.41703047373548, 0, -32.40134137821245, 89.53957451233616, -30.54208897441859, 0, 68.59205472129972, -1.0718647095919879E-05, -72.76763362396267, 0, 748.1131591796875, 534.3665161132812, 650.7639770507812, 1],
+            "name": "Camera"
+        }
+    ],
+    "scene": 0,
+    "scenes": [{
+            "nodes": [0, 1]
+        }
+    ]
+}

@@ -3,21 +3,25 @@ package ru.cool.lwjgl_kotlin
 
 import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI
 import org.lwjgl.opengl.GL
-import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL20
 import org.lwjgl.system.MemoryStack
-import ru.cool.lwjgl_kotlin.geometry.QuadGeometry
-import ru.cool.lwjgl_kotlin.geometry.TriangleGeometry
-import ru.cool.lwjgl_kotlin.objects.Mesh
+import ru.cool.lwjgl_kotlin.input.Buttons
+import ru.cool.lwjgl_kotlin.input.Keyboard
+import ru.cool.lwjgl_kotlin.input.Mouse
+import ru.cool.lwjgl_kotlin.utils.Time
 import org.lwjgl.glfw.GLFW as fw
-import org.lwjgl.opengl.GL30 as gl
+import org.lwjgl.opengl.GL33 as gl
 
 class Window(private val width: Int, private val height: Int, private val name: String) {
 
     var windowId: Long = 0
+    private var game: Game = Game()
 
     private val resizeWindowCallback = GLFWFramebufferSizeCallbackI {
         window, width, height ->
-            gl.glViewport(0,0,width,height)
+        gl.glViewport(0,0,width,height)
+        MeshRenderer.camera.updatePerspective(width, height)
     }
 
     fun createWindow() {
@@ -25,6 +29,9 @@ class Window(private val width: Int, private val height: Int, private val name: 
             throw IllegalStateException("Unable to initialize GLFW")
         }
         fw.glfwDefaultWindowHints()
+        fw.glfwWindowHint(fw.GLFW_CONTEXT_VERSION_MAJOR, 3);
+        fw.glfwWindowHint(fw.GLFW_CONTEXT_VERSION_MINOR, 3);
+        fw.glfwWindowHint(fw.GLFW_OPENGL_PROFILE, fw.GLFW_OPENGL_CORE_PROFILE);
         fw.glfwWindowHint(fw.GLFW_VISIBLE, fw.GLFW_FALSE)
         fw.glfwWindowHint(fw.GLFW_RESIZABLE, fw.GLFW_TRUE)
         windowId = fw.glfwCreateWindow(width, height, name, 0, 0)
@@ -43,21 +50,30 @@ class Window(private val width: Int, private val height: Int, private val name: 
             )
         }
         fw.glfwMakeContextCurrent(windowId)
+        fw.glfwSetInputMode(windowId, fw.GLFW_CURSOR, fw.GLFW_CURSOR_DISABLED);
         GL.createCapabilities()
+        println(GL11.glGetString(GL11.GL_VERSION))
+        println(GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION))
         fw.glfwShowWindow(windowId)
+        Keyboard.handleInput(windowId)
+        Mouse.handleInput(windowId)
     }
 
     fun update() {
-        val quad = Mesh(QuadGeometry())
+        game.create()
+
         while (!fw.glfwWindowShouldClose(windowId)) {
-            gl.glClear(gl.GL_COLOR_BUFFER_BIT or gl.GL_DEPTH_BUFFER_BIT)
-            gl.glClearColor(1f, 0f, 0f, 1f)
-            MeshRenderer.drawMesh(quad)
-            MeshRenderer.draw()
+            if (Keyboard.isButtonPress(Buttons.ESCAPE)){
+                fw.glfwTerminate()
+                return
+            }
+            Time.prevTime = fw.glfwGetTime()
+            game.update()
+            gl.glDisable(gl.GL_DEPTH_TEST)
             fw.glfwSwapBuffers(windowId)
             fw.glfwPollEvents()
+            Time.deltaTime = Time.prevTime - fw.glfwGetTime()
+            fw.glfwSetFramebufferSizeCallback(windowId, resizeWindowCallback)
         }
-        fw.glfwSetFramebufferSizeCallback(windowId, resizeWindowCallback)
     }
-
 }

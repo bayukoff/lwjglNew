@@ -49,7 +49,7 @@ public class CameraController extends MovingObjectsController{
         yOffset *= Config.SENSITIVITY;
 
         camera.setRotationYaw(camera.getRotationYaw() + xOffset);
-        camera.setRotationPitch((float) Math.clamp(camera.getRotationPitch() + yOffset, -89.9, 89.9));
+        camera.setRotationPitch((float) org.joml.Math.clamp(camera.getRotationPitch() + yOffset, -89.9, 89.9));
 
         Vector3f direction = new Vector3f();
         direction.x = (float) ((float) Math.cos(Math.toRadians(camera.getRotationPitch())) * Math.cos(Math.toRadians(camera.getRotationYaw())));

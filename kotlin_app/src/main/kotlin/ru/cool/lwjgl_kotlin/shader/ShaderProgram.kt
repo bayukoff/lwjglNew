@@ -1,5 +1,6 @@
 package ru.cool.lwjgl_kotlin.shader
 
+import org.joml.Matrix3f
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Vector4f
@@ -27,12 +28,32 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
         GL30.glUseProgram(0)
     }
 
+    fun setUniformBoolean(name: String, value: Boolean){
+        var uniformLocation = getUniformLocation(name)
+        GL30.glUniform1i(uniformLocation, if(value) 1 else 0)
+    }
+
+    fun setUniformFloat(name: String, value: Float){
+        val uniformLocation = getUniformLocation(name)
+        GL30.glUniform1f(uniformLocation, value)
+
+    }
+
     fun setUniformMatrix4f(name: String, mat: Matrix4f){
         val uniformLocation = getUniformLocation(name)
         MemoryStack.stackPush().use { stack ->
             val data = stack.mallocFloat(16)
-            mat.get(data).flip()
+            mat.get(data)
             GL30.glUniformMatrix4fv(uniformLocation, false, data)
+        }
+    }
+
+    fun setUniformMatrix3f(name: String, mat: Matrix3f){
+        val uniformLocation = getUniformLocation(name)
+        MemoryStack.stackPush().use { stack ->
+            val data = stack.mallocFloat(9)
+            mat.get(data)
+            GL30.glUniformMatrix3fv(uniformLocation, false, data)
         }
     }
 

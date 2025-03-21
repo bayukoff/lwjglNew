@@ -30,10 +30,10 @@ public class TextureMaterial implements IMaterial {
     }
 
     public void unbindTextures(){
-        textures.getFirst().unbindTexture();
+        textures.get(0).unbindTexture();
     }
     @Override
     public void applyMaterial() {
-        textures.getFirst().bindTexture();
+        textures.get(0).bindTexture();
     }
 }

@@ -2,14 +2,15 @@ package ru.cool.lwjgl_kotlin.shader
 
 import org.lwjgl.opengl.GL30
 import java.io.File
+import java.io.InputStreamReader
 
 class Shader(val shaderProgramPath: String, type: ShaderType) {
     private lateinit var shaderCode: String
     var shaderID = GL30.glCreateShader(type.type)
 
     init{
-        val file = File(javaClass.getResource(shaderProgramPath).toURI())
-        shaderCode = file.readText()
+        val reader = InputStreamReader(javaClass.getResourceAsStream(shaderProgramPath)!!)
+        shaderCode = reader.readText()
     }
 
     fun compileShader(): Shader{

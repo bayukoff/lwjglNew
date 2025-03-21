@@ -3,13 +3,13 @@ package ru.cool.lwjgl_kotlin.geometry
 import org.lwjgl.BufferUtils
 
 class QuadGeometry: Geometry(
-    BufferUtils.createFloatBuffer(12).apply {
+    BufferUtils.createFloatBuffer(32).apply {
         put(
             floatArrayOf(
-                -1f, -1f, 0f,
-                -1f, 1f, 0f,
-                1f, 1f, 0f,
-                1f, -1f, 0f
+                -1f, -1f, 0f, 0f, 0f, 1f,  0f, 0f,
+                -1f, 1f, 0f,  0f, 0f, 1f,  0f, 1f,
+                1f, 1f, 0f,   0f, 0f, 1f,  1f, 1f,
+                1f, -1f, 0f,  0f, 0f, 1f,  1f, 0f
             )
         )
         flip()
@@ -22,5 +22,7 @@ class QuadGeometry: Geometry(
             )
         )
         flip()
-    }
+    },
+    true,
+    true
 )

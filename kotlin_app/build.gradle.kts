@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "ru.cool"
@@ -24,6 +25,7 @@ dependencies {
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-stb", classifier = "natives-windows")
     implementation("org.joml", "joml", "1.10.5")
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 
 tasks.test {
@@ -31,4 +33,19 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(17)
+}
+
+//java{
+//    sourceCompatibility = JavaVersion.VERSION_1_8
+//    targetCompatibility = JavaVersion.VERSION_1_8
+//}
+
+tasks.withType<Jar>{
+    manifest{
+        attributes["Main-Class"] = "ru.cool.lwjgl_kotlin.ApplicationKt"
+    }
+}
+
+tasks.shadowJar {
+    archiveFileName.set("game.jar")
 }
