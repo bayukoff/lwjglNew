@@ -11,7 +11,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:5.12.2"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation(platform("org.lwjgl:lwjgl-bom:3.3.3"))
     implementation("org.lwjgl:lwjgl-assimp:3.3.3")
     implementation("org.lwjgl", "lwjgl")
@@ -20,6 +22,7 @@ dependencies {
     implementation("org.lwjgl", "lwjgl-opengl")
     implementation("org.lwjgl", "lwjgl-stb")
     runtimeOnly("org.lwjgl", "lwjgl", classifier = "natives-windows")
+    runtimeOnly("org.lwjgl", "lwjgl-assimp", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-glfw", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-openal", classifier = "natives-windows")
     runtimeOnly("org.lwjgl", "lwjgl-opengl", classifier = "natives-windows")

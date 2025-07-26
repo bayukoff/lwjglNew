@@ -9,6 +9,7 @@ enum class Buttons(keyId: Int) {
     S(GLFW.GLFW_KEY_S),
     D(GLFW.GLFW_KEY_D),
     R(GLFW.GLFW_KEY_R),
+    F(GLFW.GLFW_KEY_F),
     SPACE(GLFW.GLFW_KEY_SPACE),
     LEFT_CTR(GLFW.GLFW_KEY_LEFT_CONTROL);
 

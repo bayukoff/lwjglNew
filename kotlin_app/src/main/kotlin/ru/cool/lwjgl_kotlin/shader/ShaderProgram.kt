@@ -6,6 +6,7 @@ import org.joml.Vector3f
 import org.joml.Vector4f
 import org.lwjgl.opengl.GL30
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryUtil
 
 class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
     var programID = GL30.glCreateProgram()
@@ -29,7 +30,7 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
     }
 
     fun setUniformBoolean(name: String, value: Boolean){
-        var uniformLocation = getUniformLocation(name)
+        val uniformLocation = getUniformLocation(name)
         GL30.glUniform1i(uniformLocation, if(value) 1 else 0)
     }
 
@@ -45,6 +46,17 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
             val data = stack.mallocFloat(16)
             mat.get(data)
             GL30.glUniformMatrix4fv(uniformLocation, false, data)
+        }
+    }
+
+    //TODO переделать под memoryStack
+    fun setUniformMatrix4fv(name: String, matrices: MutableList<Matrix4f>){
+        val uniformLocation = getUniformLocation(name)
+        MemoryStack.stackPush().use { stack ->
+            val buffer = stack.mallocFloat(matrices.size * 16)
+            for (matrix in matrices) matrix.get(buffer)
+            buffer.flip()
+            GL30.glUniformMatrix4fv(uniformLocation, false, buffer)
         }
     }
 
@@ -70,7 +82,7 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
     fun getUniformLocation(name: String): Int{
         val uniformLocation = GL30.glGetUniformLocation(programID, name)
         if (uniformLocation == -1)
-            throw Exception("Не удается найти Uniform!")
+            throw Exception("Не удается найти Uniform! $name")
         return uniformLocation
     }
 }

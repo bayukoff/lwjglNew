@@ -1,28 +1,34 @@
 package ru.cool.lwjgl_kotlin.geometry
 
-import org.lwjgl.BufferUtils
+import ru.cool.lwjgl_kotlin.loaders.types.Normal
+import ru.cool.lwjgl_kotlin.loaders.types.UV
+import ru.cool.lwjgl_kotlin.loaders.types.Vertex
 
-class QuadGeometry: Geometry(
-    BufferUtils.createFloatBuffer(32).apply {
-        put(
-            floatArrayOf(
-                -1f, -1f, 0f, 0f, 0f, 1f,  0f, 0f,
-                -1f, 1f, 0f,  0f, 0f, 1f,  0f, 1f,
-                1f, 1f, 0f,   0f, 0f, 1f,  1f, 1f,
-                1f, -1f, 0f,  0f, 0f, 1f,  1f, 0f
-            )
-        )
-        flip()
-    },
-    BufferUtils.createIntBuffer(6).apply {
-        put(
-            intArrayOf(
-                0, 1, 2,
-                2, 0, 3
-            )
-        )
-        flip()
-    },
-    true,
-    true
-)
+class QuadGeometry: AbstractGeometry(
+    arrayOf(
+        Vertex(-1f, -1f, 0f),
+        Vertex(-1f, 1f, 0f),
+        Vertex(1f, 1f, 0f),
+        Vertex(1f, -1f, 0f),
+    ),
+    arrayOf(
+        Normal(0f, 0f, 1f),
+        Normal(0f, 0f, 1f),
+        Normal(0f, 0f, 1f),
+        Normal(0f, 0f, 1f)
+    ),
+    arrayOf(
+        UV(0f, 0f),
+        UV(0f, 1f),
+        UV(1f, 1f),
+        UV(1f, 0f)
+    ),
+    intArrayOf(
+        0, 1, 2,
+        2, 0, 3
+    )
+){
+    init {
+        initBuffers()
+    }
+}

@@ -2,6 +2,7 @@ package ru.cool.lwjgl_kotlin
 
 import org.joml.Matrix4f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL33
 import ru.cool.lwjgl_kotlin.input.controllers.CameraController
 import ru.cool.lwjgl_kotlin.objects.Mesh
@@ -10,10 +11,14 @@ import ru.cool.lwjgl_kotlin.shader.Shader
 import ru.cool.lwjgl_kotlin.shader.ShaderProgram
 import ru.cool.lwjgl_kotlin.shader.ShaderType
 import ru.cool.lwjgl_kotlin.material.TextureMaterial
+import ru.cool.lwjgl_kotlin.objects.Model
+import ru.cool.lwjgl_kotlin.objects.SceneObject
+import ru.cool.lwjgl_kotlin.objects.SceneObject3D
+import ru.cool.lwjgl_kotlin.utils.Time
 
 object MeshRenderer {
 
-    private val meshes: MutableList<Mesh> = mutableListOf()
+    private val objects: MutableList<SceneObject3D> = mutableListOf()
     private val vertexShader = Shader("/shaders/vertexShader.vert", ShaderType.VERTEX_SHADER).compileShader()
     private val fragmentShader = Shader("/shaders/fragmentShader.frag", ShaderType.FRAGMENT_SHADER).compileShader()
     var shaderProgram: ShaderProgram = ShaderProgram(vertexShader, fragmentShader).createProgram()
@@ -30,34 +35,59 @@ object MeshRenderer {
     }
     var cameraController = CameraController(camera, 5f)
 
-    fun drawMesh(mesh: Mesh){
-        if (!meshes.contains(mesh)) {
-            meshes.add(mesh)
-        }
+    fun addObjectToDraw(sceneObject: SceneObject3D) {
+        if (!objects.contains(sceneObject))
+            objects.add(sceneObject)
     }
 
     fun beginDraw() {
         shaderProgram.bindProgram()
         cameraController.invoke()
-
     }
-    fun draw(){
-        for (mesh in meshes){
-            val geometry = mesh.geometry
-            val vao = geometry!!.vao
-            val material = mesh.material
-            vao.bind()
-            if (material is TextureMaterial) {
-                material.texture.bindTexture()
-            }else{
-                GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0)
+
+    private fun draw(sceneObject: SceneObject) {
+        if (sceneObject is SceneObject3D){
+            val objectGeometry = sceneObject.geometry
+            if (objectGeometry != null){
+                for (geometry in objectGeometry) {
+                    val vao = geometry.vao
+                    val material = sceneObject.material
+                    vao.bind()
+                    if (material != null){
+                        if (material is TextureMaterial) {
+                            material.texture.bindTexture()
+                        } else {
+                            GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0)
+                        }
+                        material.applyMaterial()
+                    }
+//                    println(GL30.glGetError())
+                    sceneObject.updateMatrix()
+                    GL33.glDrawElements(GL33.GL_TRIANGLES, geometry.indices.size, GL33.GL_UNSIGNED_INT, 0)
+                    if (material is TextureMaterial)
+                        material.texture.unbindTexture()
+                    vao.unbind()
+                }
             }
-            mesh.material!!.applyMaterial()
-            mesh.updateMatrix()
-            GL33.glDrawElements(GL33.GL_TRIANGLES, geometry.indices.limit(), GL33.GL_UNSIGNED_INT, 0)
-            if (material is TextureMaterial)
-                material.texture.unbindTexture()
-            vao.unbind()
+        }
+    }
+
+    private fun drawChildren(children: Array<SceneObject>){
+        for (child in children){
+            draw(child)
+            if (!child.children.isNullOrEmpty()){
+                drawChildren(child.children!!)
+            }
+        }
+    }
+
+    fun draw(){
+        for (sceneObject in objects) {
+            draw(sceneObject)
+            val sceneObjectChildren = sceneObject.children
+            if (!sceneObjectChildren.isNullOrEmpty()){
+                drawChildren(sceneObjectChildren)
+            }
         }
         shaderProgram.unbindProgram()
     }

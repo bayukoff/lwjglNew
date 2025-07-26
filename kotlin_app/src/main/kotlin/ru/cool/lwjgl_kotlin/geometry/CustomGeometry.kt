@@ -1,8 +1,17 @@
 package ru.cool.lwjgl_kotlin.geometry
 
-import java.nio.FloatBuffer
-import java.nio.IntBuffer
+import ru.cool.lwjgl_kotlin.loaders.types.Normal
+import ru.cool.lwjgl_kotlin.loaders.types.UV
+import ru.cool.lwjgl_kotlin.loaders.types.Vertex
 
-class CustomGeometry(override var vertices: FloatBuffer, override var indices: IntBuffer, override var hasUV: Boolean, override var hasNormal: Boolean): Geometry(vertices, indices,hasUV,hasNormal) {
+class CustomGeometry(
+    override val vertices: Array<Vertex>,
+    override val normals: Array<Normal>?,
+    override val textureCoords: Array<UV>?,
+    override val indices: IntArray
+):AbstractGeometry(vertices, normals, textureCoords, indices) {
 
+    init{
+        initBuffers()
+    }
 }

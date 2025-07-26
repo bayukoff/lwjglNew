@@ -1,5 +1,11 @@
 package ru.cool.lwjgl_kotlin.utils
 
+import org.lwjgl.BufferUtils
+import org.lwjgl.assimp.AIVector3D
+import org.lwjgl.system.MemoryUtil
+import ru.cool.lwjgl_kotlin.loaders.types.IVector
+import ru.cool.lwjgl_kotlin.loaders.types.IVector2D
+import ru.cool.lwjgl_kotlin.loaders.types.IVector3D
 import java.nio.Buffer
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -11,55 +17,64 @@ import java.nio.ShortBuffer
 
 object Buffers {
     fun showBufferData(buffer: Buffer) {
-        // Проверяем тип буфера и выводим содержимое в зависимости от типа
         when (buffer) {
             is ByteBuffer -> {
                 println("ByteBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим байты
+                    print("${buffer.get()} ")
                 }
             }
             is IntBuffer -> {
                 println("IntBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим целые числа
+                    print("${buffer.get()} ")
                 }
             }
             is FloatBuffer -> {
                 println("FloatBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим числа с плавающей точкой
+                    print("${buffer.get()} ")
                 }
             }
             is ShortBuffer -> {
                 println("ShortBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим короткие числа
+                    print("${buffer.get()} ")
                 }
             }
             is LongBuffer -> {
                 println("LongBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим длинные числа
+                    print("${buffer.get()} ")
                 }
             }
             is DoubleBuffer -> {
                 println("DoubleBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим числа с двойной точностью
+                    print("${buffer.get()} ")
                 }
             }
             is CharBuffer -> {
                 println("CharBuffer contents:")
                 while (buffer.hasRemaining()) {
-                    print("${buffer.get()} ") // Выводим символы
+                    print("${buffer.get()} ")
                 }
             }
             else -> {
                 println("Unknown buffer type")
             }
         }
-        // Восстанавливаем начальную позицию буфера
         buffer.flip()
     }
+
+
+
+    inline fun <T: Buffer> T.memUse(block: (T) -> Unit){
+        try{
+            block(this)
+        }finally {
+            MemoryUtil.memFree(this)
+        }
+    }
+
 }

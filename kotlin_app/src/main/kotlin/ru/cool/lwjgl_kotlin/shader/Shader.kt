@@ -4,8 +4,8 @@ import org.lwjgl.opengl.GL30
 import java.io.File
 import java.io.InputStreamReader
 
-class Shader(val shaderProgramPath: String, type: ShaderType) {
-    private lateinit var shaderCode: String
+class Shader(shaderProgramPath: String, type: ShaderType) {
+    private var shaderCode: String
     var shaderID = GL30.glCreateShader(type.type)
 
     init{

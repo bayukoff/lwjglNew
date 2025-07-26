@@ -68,6 +68,7 @@ class Window(private val width: Int, private val height: Int, private val name: 
                 return
             }
             Time.prevTime = fw.glfwGetTime()
+            Time.currentTime = fw.glfwGetTime()
             game.update()
             gl.glDisable(gl.GL_DEPTH_TEST)
             fw.glfwSwapBuffers(windowId)

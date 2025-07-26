@@ -1,6 +1,5 @@
 package ru.cool.lwjgl_kotlin.geometry
 
-import org.lwjgl.opengl.GL30
 import org.lwjgl.system.MemoryUtil
 import ru.cool.lwjgl_kotlin.glObjects.EBO
 import ru.cool.lwjgl_kotlin.glObjects.VAO
@@ -8,8 +7,7 @@ import ru.cool.lwjgl_kotlin.glObjects.VBO
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
 
-abstract class Geometry private constructor(
-    ) {
+abstract class Geometry private constructor() {
     val vbo = VBO()
     val ebo = EBO()
     val vao = VAO()

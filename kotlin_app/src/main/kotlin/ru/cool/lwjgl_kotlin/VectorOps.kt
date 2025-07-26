@@ -1,9 +1,6 @@
 package ru.cool.lwjgl_kotlin
 
-import org.joml.Vector2d
-import org.joml.Vector2f
-import org.joml.Vector3d
-import org.joml.Vector3f
+import org.joml.*
 
 operator fun Vector3f.plus(other: Vector3f): Vector3f {
     return this.add(other)
@@ -127,4 +124,17 @@ operator fun Vector2f.times(other: Vector2f): Vector2f {
 
 operator fun Vector2f.times(scalar: Float): Vector2f {
     return this.mul(scalar)
+}
+
+fun Matrix4f.hasDefaultTransform(epsilon: Float = 1e-6f): Boolean {
+    val pos = Vector3f()
+    val scale = Vector3f()
+    val rot = Quaternionf()
+    this.getTranslation(pos)
+    this.getScale(scale)
+    this.getNormalizedRotation(rot)
+
+    return pos.equals(Vector3f(0f), epsilon)
+            && scale.equals(Vector3f(1f), epsilon)
+            && rot.equals(Quaternionf(), epsilon)
 }
