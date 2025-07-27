@@ -14,14 +14,25 @@ class Bone(var name: String): TransformableObject() {
 
     fun getGlobalMatrix(): Matrix4f {
         val localMatrix = Matrix4f()
-        if (startMatrix != null)
-            localMatrix.mul(startMatrix)
-        localMatrix
-            .translate(position)
+        startMatrix?.let { localMatrix.set(it) }
+
+        localMatrix.translate(position)
             .rotate(rotation)
             .scale(scale)
+
         return parentBone?.getGlobalMatrix()?.mul(localMatrix) ?: localMatrix
     }
+
+//    fun getGlobalMatrix(): Matrix4f {
+//        val localMatrix = Matrix4f()
+//        if (startMatrix != null)
+//            localMatrix.mul(startMatrix)
+//        localMatrix
+//            .translate(position)
+//            .rotate(rotation)
+//            .scale(scale)
+//        return parentBone?.getGlobalMatrix()?.mul(localMatrix) ?: localMatrix
+//    }
 
     fun calculateFinalMatrix(): Matrix4f {
         return Matrix4f(getGlobalMatrix()).mul(offsetMatrix)

@@ -70,7 +70,7 @@ object ModelLoader {
                             bone = existingBone ?: Bone(boneName)
                         }
                         else{
-                            bone = Bone(boneName)
+                            bone = Bone(boneName).apply { boneId = j }
                         }
                     }else{
                         skeleton = Skeleton()
@@ -97,7 +97,7 @@ object ModelLoader {
         return Mesh(node.mName().dataString(), geometry.requireNoNulls())
     }
 
-    private fun getAllBonesFromNode(rootNode: AINode){
+    private fun getAllBonesFromNode(rootNode: AINode, index: Int){
         if (skeleton == null)
             skeleton = Skeleton()
         lateinit var rootBone: Bone
@@ -107,6 +107,7 @@ object ModelLoader {
         }else{
             rootBone = Bone(boneName).apply {
                 startMatrix = getMatrixFromNode(rootNode)
+                boneId = index
             }
             allBones[boneName] = rootBone
         }
@@ -123,9 +124,10 @@ object ModelLoader {
                     if (allBones.containsKey(childName)) {
                         childBone = allBones[childName]!!
                     } else {
-                        childBone = Bone(childName)
+                        childBone = Bone(childName).apply { boneId = index + i }
                         allBones[childName] = childBone
                     }
+                    childBone.parentBone = bone
                     bone.children.add(childBone)
                     if (child.mNumChildren() > 0)
                         q.addLast(child to childBone)
@@ -135,46 +137,6 @@ object ModelLoader {
         skeleton!!.bones.add(rootBone)
     }
 
-//    private fun getAllBonesFromNode(rootNode: AINode): List<Bone> {
-//        if (skeleton == null)
-//            skeleton = Skeleton()
-//        lateinit var rootBone: Bone
-//        if (allBones.containsKey(rootNode.mName().dataString())){
-//            rootBone = allBones[rootNode.mName().dataString()]!!
-//        }else{
-//            rootBone = Bone(rootNode.mName().dataString()).apply {
-//                startMatrix = getMatrixFromNode(rootNode)
-//            }
-//        }
-//        val boneMap = mutableMapOf<String, Bone>()
-//        skeleton!!.bones.add(rootBone)
-//        boneMap[rootBone.name] = rootBone
-//        val q = ArrayDeque<Pair<AINode, Bone>>()
-//        q.add(rootNode to rootBone)
-//        while (q.isNotEmpty()) {
-//            val (currentAINode, parentBone) = q.removeFirst()
-//            val numChildren = currentAINode.mNumChildren()
-//            for (i in 0 until numChildren) {
-//                val aiChild = AINode.create(currentAINode.mChildren()!![i])
-//                lateinit var childBone: Bone
-//                if (allBones.containsKey(currentAINode.mName().dataString())){
-//                    childBone = allBones[currentAINode.mName().dataString()]!!
-//                }else{
-//                    childBone = Bone(aiChild.mName().dataString()).apply {
-//                        startMatrix = getMatrixFromNode(aiChild)
-//                    }
-//                    allBones[childBone.name] = childBone
-//                }
-//                childBone.parentBone = parentBone
-//                if (parentBone.children == null)
-//                    parentBone.children = mutableListOf()
-//                parentBone.children!!.add(childBone)
-//                boneMap[childBone.name] = childBone
-//                q.add(aiChild to childBone)
-//            }
-//        }
-//        return skeleton!!.bones
-//    }
 
     private fun traversalNodes(rootNode: AINode, scene: AIScene, sceneObject: SceneObject){
         val numChildren = rootNode.mNumChildren()
@@ -182,7 +144,7 @@ object ModelLoader {
         for (childrenIndex in 0 until numChildren){
             val node = AINode.create(rootNode.mChildren()!!.get(childrenIndex))
             if (node.mNumMeshes() == 0){
-                getAllBonesFromNode(node)
+                getAllBonesFromNode(node, childrenIndex)
                 continue
             }else{
                 mesh = createObject(node, scene)
@@ -274,6 +236,7 @@ object ModelLoader {
         val textureCoords = VertexDataHandler.getTexCoords(aiMesh)
         val indices = VertexDataHandler.getIndices(aiMesh)
         val (boneIndices, boneWeights) = associateVerticesWithBones(vertices, bones)
+        println(boneIndices.contentToString())
         return BoneGeometry(vertices, normals, textureCoords, indices, boneIndices, boneWeights)
     }
 

@@ -17,9 +17,7 @@ class SkeletonAnimator(
     override fun playAnimations(speed: Float){
         animations.forEach {
             it.play(speed)
-//            val boneMatrices = skeleton.getBoneMatrices()
-            val boneMatrices = MutableList(4) { Matrix4f() }
-            uploadBoneMatricesToShader(boneMatrices)
+            uploadBoneMatricesToShader(skeleton.getBoneMatrices())
         }
     }
 

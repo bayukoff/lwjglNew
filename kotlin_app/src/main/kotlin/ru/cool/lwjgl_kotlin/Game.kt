@@ -1,9 +1,11 @@
 package ru.cool.lwjgl_kotlin
 
+import org.joml.Matrix4f
 import org.joml.Vector3f
 import ru.cool.lwjgl_kotlin.animation.Animators
 import ru.cool.lwjgl_kotlin.loaders.ModelLoader
 import ru.cool.lwjgl_kotlin.objects.Bone
+import ru.cool.lwjgl_kotlin.objects.Mesh
 import ru.cool.lwjgl_kotlin.objects.Model
 import ru.cool.lwjgl_kotlin.objects.light.AmbientLight
 import ru.cool.lwjgl_kotlin.objects.light.DiffuseLight
@@ -16,21 +18,21 @@ class Game: IGame {
     private lateinit var ambientLight: AmbientLight
     private lateinit var diffuseLight: DiffuseLight
     private lateinit var test: Model
-    private lateinit var test1: Model
     private lateinit var bone: Bone
     private lateinit var subbone: Bone
 
     override fun create() {
         ambientLight = AmbientLight(Vector3f(1f, 1f,1f), 0.6f)
         diffuseLight = DiffuseLight(Vector3f(1f,1f,1f), Vector3f(0f,5f,0f), 1f)
-        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animatedCube1.glb")
+        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animated-person.glb")
+//        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animated-person.glb")
         MeshRenderer.addObjectToDraw(test)
-        test1 = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\ak74.glb")
-        MeshRenderer.addObjectToDraw(test1)
         test.traverse()
-        bone = test.skeleton!!.bones[0]
-        subbone = bone.children[0]
+        test.skeleton?.traverseBones(test.skeleton!!.bones[0]){
+            println(it)
+        }
     }
+
 
     override fun update() {
         gl.glClear(gl.GL_COLOR_BUFFER_BIT or gl.GL_DEPTH_BUFFER_BIT)
@@ -38,9 +40,13 @@ class Game: IGame {
         gl.glEnable(gl.GL_DEPTH_TEST)
 
         MeshRenderer.beginDraw()
-        Animators.get(test).playAnimations(1f)
+        Animators.get(test).playAnimations(0.02f)
+//        uploadBoneMatricesToShader(mutableListOf(Matrix4f(), Matrix4f()))
 
-        println(subbone.rotation)
+        ambientLight.applyLight()
+        diffuseLight.applyLight()
+        test.translate(0f,0f,0f)
+        test.scale(1f,1f,1f)
         val lightPosition = Vector3f(0f, sin(Time.prevTime * 2).toFloat() * 10, -5f)
         diffuseLight.translate(lightPosition)
 

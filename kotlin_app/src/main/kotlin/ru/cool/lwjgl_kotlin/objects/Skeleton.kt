@@ -5,18 +5,18 @@ import org.joml.Matrix4f
 class Skeleton {
     var bones: MutableList<Bone> = mutableListOf()
 
-    fun getBoneMatrices(): MutableList<Matrix4f>{
-        val matrices = mutableListOf<Matrix4f>()
+    fun getBoneMatrices(): MutableList<Matrix4f> {
+        val matrices = MutableList(100) { Matrix4f() }
 
         fun recurse(bone: Bone) {
-            matrices += Matrix4f(bone.calculateFinalMatrix())
-            if (bone.children.isNotEmpty())
-                for (child in bone.children) recurse(child)
+            matrices[bone.boneId] = bone.calculateFinalMatrix()
+            for (child in bone.children) recurse(child)
         }
 
         for (rootBone in bones) {
             recurse(rootBone)
         }
+
         return matrices
     }
 
@@ -29,10 +29,10 @@ class Skeleton {
     }
 
     fun traverseBones(bone: Bone, block: (Bone) -> Unit = { }) {
-        block(bone)
+        block(bone)  // вызываем для текущей кости
         if (bone.children.isNotEmpty()) {
-            bone.children.forEach{
-                block(it)
+            bone.children.forEach { child ->
+                traverseBones(child, block)  // рекурсивно проходим по детям
             }
         }
     }

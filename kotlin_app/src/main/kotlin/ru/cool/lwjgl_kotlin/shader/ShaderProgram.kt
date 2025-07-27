@@ -49,14 +49,14 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
         }
     }
 
-    //TODO переделать под memoryStack
-    fun setUniformMatrix4fv(name: String, matrices: MutableList<Matrix4f>){
-        val uniformLocation = getUniformLocation(name)
+    fun setUniformMatrix4fv(name: String, matrices: List<Matrix4f>) {
+        val location = getUniformLocation(name)
         MemoryStack.stackPush().use { stack ->
             val buffer = stack.mallocFloat(matrices.size * 16)
-            for (matrix in matrices) matrix.get(buffer)
-            buffer.flip()
-            GL30.glUniformMatrix4fv(uniformLocation, false, buffer)
+            for ((i, matrix) in matrices.withIndex()) {
+                matrix.get(i * 16, buffer)
+            }
+            GL30.glUniformMatrix4fv(location, false, buffer)
         }
     }
 
@@ -77,6 +77,32 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
     fun setUniformVector4f(name: String, vec: Vector4f){
         val uniformLocation = getUniformLocation(name)
         GL30.glUniform4f(uniformLocation, vec.x, vec.y, vec.z, vec.w)
+    }
+
+    fun getUniformMatrix4f(name: String): Matrix4f{
+        MemoryStack.stackPush().use {
+            val matrix = it.mallocFloat(16)
+            GL30.glGetUniformfv(programID, getUniformLocation(name), matrix)
+            return Matrix4f(matrix)
+        }
+    }
+
+    fun getUniformMatrix4fv(name: String, count: Int): Array<Matrix4f>{
+        val first = getUniformLocation("$name[0]")
+        MemoryStack.stackPush().use { stack ->
+            val data = stack.mallocFloat(count * 16)
+            GL30.glGetUniformfv(programID, first, data)
+            val matrices = Array(count) { Matrix4f() }
+            for (i in 0 until count) {
+                val start = i * 16
+                val matBuffer = FloatArray(16)
+                for (j in 0 until 16) {
+                    matBuffer[j] = data[start + j]
+                }
+                matrices[i].set(matBuffer)
+            }
+            return matrices
+        }
     }
 
     fun getUniformLocation(name: String): Int{
