@@ -29,10 +29,10 @@ class Skeleton {
     }
 
     fun traverseBones(bone: Bone, block: (Bone) -> Unit = { }) {
-        block(bone)  // вызываем для текущей кости
+        block(bone)
         if (bone.children.isNotEmpty()) {
             bone.children.forEach { child ->
-                traverseBones(child, block)  // рекурсивно проходим по детям
+                traverseBones(child, block)
             }
         }
     }

@@ -37,7 +37,6 @@ class ShaderProgram(val vertexShader: Shader, val fragmentShader: Shader) {
     fun setUniformFloat(name: String, value: Float){
         val uniformLocation = getUniformLocation(name)
         GL30.glUniform1f(uniformLocation, value)
-
     }
 
     fun setUniformMatrix4f(name: String, mat: Matrix4f){

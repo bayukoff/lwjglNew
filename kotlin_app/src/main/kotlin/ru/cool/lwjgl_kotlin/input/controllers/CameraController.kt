@@ -34,7 +34,7 @@ class CameraController(var camera: PerspectiveCamera, var speed: Float): IContro
         val directionY = -Math.sin(Math.toRadians(camera.cameraRotationPitch));
         val directionZ = (Math.cos(Math.toRadians(camera.cameraRotationPitch)) * Math.sin(Math.toRadians(camera.cameraRotationYaw)));
 
-        val direction = Vector3f(directionX.toFloat(), directionY.toFloat(), directionZ.toFloat())
+        val direction = Vector3f(directionX, directionY, directionZ)
         camera.direction = direction
         camera.updateMatrix()
     }

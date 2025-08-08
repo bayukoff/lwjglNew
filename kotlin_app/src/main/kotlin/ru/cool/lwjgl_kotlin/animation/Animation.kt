@@ -131,6 +131,6 @@ class Animation(
     }
 
     override fun toString(): String {
-        return "Animation: $name \n\tAmount animation nodes: ${animationNodes.size} \n\tAnimation Duration: $duration"
+        return "Animation: $name \n\tAmount animation nodes: ${animationNodes.size} \n\tAnimation Duration: $duration\n"
     }
 }

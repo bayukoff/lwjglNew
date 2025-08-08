@@ -18,19 +18,15 @@ class Game: IGame {
     private lateinit var ambientLight: AmbientLight
     private lateinit var diffuseLight: DiffuseLight
     private lateinit var test: Model
-    private lateinit var bone: Bone
-    private lateinit var subbone: Bone
+    private lateinit var person: Model
 
     override fun create() {
         ambientLight = AmbientLight(Vector3f(1f, 1f,1f), 0.6f)
         diffuseLight = DiffuseLight(Vector3f(1f,1f,1f), Vector3f(0f,5f,0f), 1f)
-        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animated-person.glb")
-//        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animated-person.glb")
+        test = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\kubiki.glb")
+        person = ModelLoader.loadModel("C:\\Users\\PrudensCool\\Desktop\\models\\animated-person.glb")
         MeshRenderer.addObjectToDraw(test)
-        test.traverse()
-        test.skeleton?.traverseBones(test.skeleton!!.bones[0]){
-            println(it)
-        }
+        MeshRenderer.addObjectToDraw(person)
     }
 
 
@@ -40,8 +36,9 @@ class Game: IGame {
         gl.glEnable(gl.GL_DEPTH_TEST)
 
         MeshRenderer.beginDraw()
-        Animators.get(test).playAnimations(0.02f)
-//        uploadBoneMatricesToShader(mutableListOf(Matrix4f(), Matrix4f()))
+        Animators.get(test).playAnimations(0.2f)
+        Animators.get(person).playAnimations(0.002f)
+        println(Animators.get(test).animations)
 
         ambientLight.applyLight()
         diffuseLight.applyLight()

@@ -46,5 +46,4 @@ void main() {
         resultColor = resultColor * texture(textureSampler, v_TexCoords).rgb;
     }
     FragColor = vec4(resultColor * lightResult, 1.0);
-//    FragColor = vec4(v_VertexPosition * 0.5 + 0.5, 1.0);
 }

@@ -4,6 +4,7 @@ import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL33
+import ru.cool.lwjgl_kotlin.geometry.BoneGeometry
 import ru.cool.lwjgl_kotlin.input.controllers.CameraController
 import ru.cool.lwjgl_kotlin.objects.Mesh
 import ru.cool.lwjgl_kotlin.objects.camera.PerspectiveCamera
@@ -19,6 +20,7 @@ import ru.cool.lwjgl_kotlin.utils.Time
 object MeshRenderer {
 
     private val objects: MutableList<SceneObject3D> = mutableListOf()
+    private val objectsBatch: MutableList<Array<SceneObject>> = mutableListOf()
     private val vertexShader = Shader("/shaders/vertexShader.vert", ShaderType.VERTEX_SHADER).compileShader()
     private val fragmentShader = Shader("/shaders/fragmentShader.frag", ShaderType.FRAGMENT_SHADER).compileShader()
     var shaderProgram: ShaderProgram = ShaderProgram(vertexShader, fragmentShader).createProgram()
@@ -40,9 +42,19 @@ object MeshRenderer {
             objects.add(sceneObject)
     }
 
+    fun addObjectsToDraw(sceneObjects: Array<SceneObject>) {
+        if (!objectsBatch.contains(sceneObjects)){
+            objectsBatch.add(sceneObjects)
+        }
+    }
+
     fun beginDraw() {
         shaderProgram.bindProgram()
         cameraController.invoke()
+    }
+
+    private fun drawInstanced(){
+        
     }
 
     private fun draw(sceneObject: SceneObject) {
@@ -52,6 +64,7 @@ object MeshRenderer {
                 for (geometry in objectGeometry) {
                     val vao = geometry.vao
                     val material = sceneObject.material
+                    shaderProgram.setUniformBoolean("u_useSkinning", geometry is BoneGeometry)
                     vao.bind()
                     if (material != null){
                         if (material is TextureMaterial) {
@@ -61,7 +74,6 @@ object MeshRenderer {
                         }
                         material.applyMaterial()
                     }
-//                    println(GL30.glGetError())
                     sceneObject.updateMatrix()
                     GL33.glDrawElements(GL33.GL_TRIANGLES, geometry.indices.size, GL33.GL_UNSIGNED_INT, 0)
                     if (material is TextureMaterial)

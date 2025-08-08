@@ -6,10 +6,12 @@ class SceneObjectAnimator(
     animations
 ) {
     override fun playAnimations(speed: Float) {
-
+        animations.forEach { it.play(speed) }
     }
 
     override fun stopAnimations() {
-
+        animations.forEach {
+            it.stop()
+        }
     }
 }
